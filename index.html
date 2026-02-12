@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Valentine's Day Proposal</title>
+    <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Dancing Script', cursive;
+            background: linear-gradient(135deg, #ffe6f2, #ffb6c1, #ff69b4);
+            background-attachment: fixed;
+            color: #d63384;
+            text-align: center;
+            margin: 0;
+            padding: 0;
+            overflow: hidden;
+            position: relative;
+            min-height: 100vh;
+        }
+        h1 {
+            font-size: clamp(2em, 5vw, 3em);
+            margin-top: 15vh;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.1);
+        }
+        .buttons {
+            margin-top: 5vh;
+        }
+        button {
+            font-family: 'Dancing Script', cursive;
+            font-size: clamp(1.2em, 3vw, 1.5em);
+            padding: 12px 24px;
+            margin: 10px;
+            border: 2px solid #ff1493;
+            border-radius: 20px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+        }
+        #yes {
+            background: linear-gradient(45deg, #ff69b4, #ff1493);
+            color: white;
+        }
+        #yes:hover, #yes:active {
+            transform: scale(1.1);
+            box-shadow: 0 6px 12px rgba(0,0,0,0.3);
+        }
+        #no {
+            background: linear-gradient(45deg, #ffb6c1, #ff69b4);
+            color: #d63384;
+            position: absolute;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+            transition: opacity 1s ease; /* Smooth fade */
+        }
+        .heart {
+            position: absolute;
+            font-size: clamp(1.5em, 4vw, 2em);
+            color: #ff69b4;
+            animation: float 8s infinite linear;
+            pointer-events: none;
+            opacity: 0.8;
+        }
+        .rose {
+            position: absolute;
+            font-size: clamp(1em, 3vw, 1.5em);
+            color: #d63384;
+            animation: float 10s infinite linear;
+            pointer-events: none;
+            opacity: 0.7;
+        }
+        @keyframes float {
+            0% { transform: translateY(100vh) rotate(0deg); opacity: 0.8; }
+            50% { opacity: 1; }
+            100% { transform: translateY(-10vh) rotate(360deg); opacity: 0; }
+        }
+        #message {
+            display: none;
+            font-size: clamp(1.5em, 4vw, 2em);
+            padding: 20px;
+            max-width: 80%;
+            background: linear-gradient(135deg, #fff, #ffe6f2);
+            border: 3px solid #ff69b4;
+            border-radius: 15px;
+            box-shadow: 0 8px 16px rgba(0,0,0,0.2);
+            animation: fadeIn 1s ease-in;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.1);
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translate(-50%, -50%) scale(0.9); }
+            to { opacity: 1; transform: translate(-50%, -50%) scale(1); }
+        }
+        @media (max-width: 768px) {
+            body {
+                padding: 10px;
+            }
+            h1 {
+                margin-top: 10vh;
+            }
+            .buttons {
+                margin-top: 10vh;
+            }
+            button {
+                padding: 15px 30px;
+                font-size: 1.8em;
+            }
+            #message {
+                padding: 15px;
+                max-width: 90%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <h1 id="question">Will you be my Valentine? 💖</h1>
+    <div class="buttons" id="buttons">
+        <button id="yes">Yes! 💕</button>
+        <button id="no">No 😏</button>
+    </div>
+    <div id="message">
+        Oh my gosh, you said yes! You're the peanut butter to my jelly, the cheese to my macaroni, and the sprinkles on my ice cream sundae! Happy Valentine's Day, my love! ❤️😘
+    </div>
+    <audio id="loveMusic" preload="auto">
+        <source src="https://www.soundjay.com/misc/sounds/kiss-01.wav" type="audio/wav">
+        <!-- Blow kiss sound effect; replace with your preferred audio file if needed -->
+        Your browser does not support the audio element.
+    </audio>
+
+    <script>
+        const noButton = document.getElementById('no');
+        const yesButton = document.getElementById('yes');
+        const question = document.getElementById('question');
+        const buttons = document.getElementById('buttons');
+        const message = document.getElementById('message');
+        const loveMusic = document.getElementById('loveMusic');
+
+        // Function to create floating hearts
+        function createHeart() {
+            const heart = document.createElement('div');
+            heart.className = 'heart';
+            heart.textContent = '❤️';
+            heart.style.left = Math.random() * 100 + 'vw';
+            heart.style.animationDelay = Math.random() * 8 + 's';
+            document.body.appendChild(heart);
+            setTimeout(() => heart.remove(), 8000);
+        }
+
+        // Function to create floating roses
+        function createRose() {
+            const rose = document.createElement('div');
+            rose.className = 'rose';
+            rose.textContent = '🌹';
+            rose.style.left = Math.random() * 100 + 'vw';
+            rose.style.animationDelay = Math.random() * 10 + 's';
+            document.body.appendChild(rose);
+            setTimeout(() => rose.remove(), 10000);
+        }
+
+        // Create elements every 300-500ms
+        setInterval(createHeart, 400);
+        setInterval(createRose, 600);
+
+        // Fade logic for the "No" button
+        const dodgeDistance = 50; // pixels
+        let fadeTimer;
+
+        function handleMove(clientX, clientY) {
+            const rect = noButton.getBoundingClientRect();
+            const buttonCenterX = rect.left + rect.width / 2;
+            const buttonCenterY = rect.top + rect.height / 2;
+            const distance = Math.sqrt((clientX - buttonCenterX) ** 2 + (clientY - buttonCenterY) ** 2);
+
+            if (distance < dodgeDistance) {
+                // Start fading out
+                noButton.style.opacity = '0';
+                clearTimeout(fadeTimer);
+                fadeTimer = setTimeout(() => {
+                    noButton.style.opacity = '1'; // Fade back in after 2 seconds
+                }, 2000);
+            } else {
+                // Ensure it's visible if not near
+                noButton.style.opacity = '1';
+            }
+        }
+
+        // Mouse events for desktop
+        document.addEventListener('mousemove', (e) => handleMove(e.clientX, e.clientY));
+
+        // Touch events for mobile
+        document.addEventListener('touchmove', (e) => {
+            e.preventDefault();
+            const touch = e.touches[0];
+            handleMove(touch.clientX, touch.clientY);
+        });
+
+        // Yes button click event: hide question and buttons, show message, and play music
+        yesButton.addEventListener('click', () => {
+            question.style.display = 'none';
+            buttons.style.display = 'none';
+            message.style.display = 'block';
+            loveMusic.play(); // Play the blow kiss sound
+        });
+    </script>
+</body>
+</html>
